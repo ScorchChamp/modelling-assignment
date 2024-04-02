@@ -7575,7 +7575,6 @@ a.anchor-link {
 <span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">SimpleImputer</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 </pre></div>
 </div>
@@ -7956,11 +7955,11 @@ dtype: int64</pre>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="5.-Replace-the-identified-outliers-with-missing-values-in-the-original-dataset.">5. Replace the identified outliers with missing values in the original dataset.<a class="anchor-link" href="#5.-Replace-the-identified-outliers-with-missing-values-in-the-original-dataset.">¶</a></h3>
+<h3 id="5.-Replace-the-identified-outliers-with-missing-values-in-the-original-dataset.">5. Replace the identified outliers with missing values in the original dataset.<a class="anchor-link" href="#5.-Replace-the-identified-outliers-with-missing-values-in-the-original-dataset.">¶</a></h3><p>We don't use the cook's D anymore, as it will remove values that might be natural randomness. The 2 filters give 48 more NaN values.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7972,7 +7971,29 @@ dtype: int64</pre>
 
 <span class="n">data_original_with_missing_outliers</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_original_with_missing_outliers</span><span class="p">[</span><span class="s1">'discount'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">52</span><span class="p">,</span> <span class="s1">'discount'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 <span class="n">data_original_with_missing_outliers</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_original_with_missing_outliers</span><span class="p">[</span><span class="s1">'perc_physical'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">'perc_physical'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="n">data_original_with_missing_outliers</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 </pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>products_sold         0
+product_category      0
+quality             109
+satisfaction          0
+discount             24
+retail_price        158
+perc_physical        89
+market_size           0
+dtype: int64</pre>
 </div>
 </div>
 </div>
@@ -8355,7 +8376,6 @@ dtype: int64</pre>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="2.-Identify-non-linear-relationships-based-on-these-visualizations.">2. Identify non-linear relationships based on these visualizations.<a class="anchor-link" href="#2.-Identify-non-linear-relationships-based-on-these-visualizations.">¶</a></h3><ol>
 <li>Satisfaction seems like a non-linear relationship</li>
-<li>Discount seems like a non-linear relationship; but it is not very clear as the data points are very scattered on the right. I will try to use it</li>
 <li>Retail price and perc physical seem like a random cloud, with no real influence on the products sold</li>
 </ol>
 </div>
@@ -8384,8 +8404,8 @@ dtype: int64</pre>
 <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">data_clean</span><span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">]</span>
 
-<span class="n">model_with_log</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-<span class="n">r2</span> <span class="o">=</span> <span class="n">model_with_log</span><span class="o">.</span><span class="n">rsquared</span>
+<span class="n">old_model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">old_model</span><span class="o">.</span><span class="n">rsquared</span>
 <span class="n">r2</span>
 </pre></div>
 </div>
@@ -8425,7 +8445,6 @@ dtype: int64</pre>
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">data_clean_log</span> <span class="o">=</span> <span class="n">data_clean</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">data_clean_log</span><span class="p">[</span><span class="s1">'log_satisfaction'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data_clean_log</span><span class="p">[</span><span class="s1">'satisfaction'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">data_clean_log</span><span class="p">[</span><span class="s1">'log_discount'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data_clean_log</span><span class="p">[</span><span class="s1">'discount'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">x_data_clean_log</span> <span class="o">=</span> <span class="n">data_clean_log</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">])</span>
 <span class="n">x_data_clean_log</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">x_data_clean_log</span><span class="p">)</span>
@@ -8446,7 +8465,7 @@ dtype: int64</pre>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>0.84800540217736</pre>
+<pre>0.8480053942932311</pre>
 </div>
 </div>
 </div>
@@ -8483,7 +8502,6 @@ dtype: int64</pre>
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">data_poly</span> <span class="o">=</span> <span class="n">data_clean</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">data_poly</span><span class="p">[</span><span class="s1">'satisfaction_squared'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_poly</span><span class="p">[</span><span class="s1">'satisfaction'</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
-<span class="n">data_poly</span><span class="p">[</span><span class="s1">'discount_squared'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_poly</span><span class="p">[</span><span class="s1">'discount'</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
 
 <span class="n">X_polynomial</span> <span class="o">=</span> <span class="n">data_poly</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">])</span>
 <span class="n">X_polynomial</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_polynomial</span><span class="p">)</span>
@@ -8502,10 +8520,18 @@ dtype: int64</pre>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>C:\Users\Larsc\AppData\Roaming\Python\Python312\site-packages\statsmodels\regression\linear_model.py:1966: RuntimeWarning: divide by zero encountered in scalar divide
+  return np.sqrt(eigvals[0]/eigvals[-1])
+</pre>
+</div>
+</div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>0.8486783427389549</pre>
+<pre>0.8486776976115032</pre>
 </div>
 </div>
 </div>
@@ -8543,12 +8569,12 @@ dtype: int64</pre>
 <td>x</td>
 </tr>
 <tr>
-<td>Log(satisfaction), Log(discount)</td>
+<td>Log(satisfaction)</td>
 <td>0.848</td>
 <td>Yes</td>
 </tr>
 <tr>
-<td>Poly(satisfaction), Poly(discount)</td>
+<td>Poly(satisfaction)</td>
 <td>0.849</td>
 <td>Yes</td>
 </tr>
@@ -8651,8 +8677,9 @@ dtype: int64</pre>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">X_train</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8678,7 +8705,7 @@ dtype: int64</pre>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Coefficient'</span><span class="p">])</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Coefficient'</span><span class="p">])</span>
 
 <span class="n">p_values_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model_with_polynomial</span><span class="o">.</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'P-Value'</span><span class="p">])</span>
 <span class="n">results_df</span> <span class="o">=</span> <span class="n">coefficients</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">p_values_df</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -8722,68 +8749,63 @@ dtype: int64</pre>
 <tbody>
 <tr>
 <th>satisfaction</th>
-<td>-1.124874e+05</td>
-<td>4.299505e-45</td>
+<td>-8482.300784</td>
+<td>4.129024e-45</td>
 </tr>
 <tr>
 <th>discount</th>
-<td>1.785231e+03</td>
-<td>9.696419e-15</td>
+<td>2109.860684</td>
+<td>1.189511e-115</td>
 </tr>
 <tr>
 <th>retail_price</th>
-<td>-5.890149e+02</td>
-<td>2.035618e-21</td>
+<td>-542.889309</td>
+<td>1.956290e-21</td>
 </tr>
 <tr>
 <th>perc_physical</th>
-<td>1.310798e+01</td>
-<td>4.958886e-01</td>
+<td>34.608005</td>
+<td>4.944548e-01</td>
 </tr>
 <tr>
 <th>market_size</th>
-<td>4.030588e+01</td>
+<td>40.647855</td>
 <td>0.000000e+00</td>
 </tr>
 <tr>
 <th>quality_premium</th>
-<td>-1.157207e+04</td>
-<td>5.011812e-39</td>
+<td>-11101.150765</td>
+<td>4.587287e-39</td>
 </tr>
 <tr>
 <th>quality_nan</th>
-<td>-4.397934e+03</td>
-<td>3.873695e-03</td>
+<td>-4615.356311</td>
+<td>3.876813e-03</td>
 </tr>
 <tr>
 <th>product_category_health</th>
-<td>-1.954348e+04</td>
-<td>8.540467e-43</td>
+<td>-19203.929942</td>
+<td>7.630133e-43</td>
 </tr>
 <tr>
 <th>product_category_other</th>
-<td>-2.056435e+04</td>
-<td>8.200334e-30</td>
+<td>-20211.960830</td>
+<td>7.330656e-30</td>
 </tr>
 <tr>
 <th>product_category_toys</th>
-<td>-2.840617e+04</td>
-<td>3.613539e-83</td>
+<td>-27844.502373</td>
+<td>2.769075e-83</td>
 </tr>
 <tr>
 <th>product_category_nan</th>
-<td>-7.275958e-12</td>
-<td>9.182888e-02</td>
+<td>0.000000</td>
+<td>NaN</td>
 </tr>
 <tr>
 <th>satisfaction_squared</th>
-<td>2.008438e+04</td>
-<td>1.490847e-80</td>
-</tr>
-<tr>
-<th>discount_squared</th>
-<td>1.174536e+01</td>
-<td>9.222131e-01</td>
+<td>6967.117379</td>
+<td>1.370972e-80</td>
 </tr>
 </tbody>
 </table>
@@ -8916,7 +8938,7 @@ dtype: int64</pre>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="First-interpretation">First interpretation<a class="anchor-link" href="#First-interpretation">¶</a></h3><h4 id="The-Coefficients">The Coefficients<a class="anchor-link" href="#The-Coefficients">¶</a></h4><ol>
-<li>Retail Price: The coefficient of -587 indicates that for each unit increase in price, the number of products sold decreases by approximately 589 units, holding all other factors constant. This suggests a significant negative impact of price on sales volume.</li>
+<li>Retail Price: The coefficient of -542 indicates that for each unit increase in price, the number of products sold decreases by approximately 542 units, holding all other factors constant. This suggests a significant negative impact of price on sales volume.</li>
 <li>Market Size: The coefficient of 40 suggests that for each unit increase in market size, the number of products sold increases by approximately 40 units, holding all other factors constant. This indicates a positive impact of market size on sales volume.</li>
 </ol>
 <blockquote>
@@ -8985,7 +9007,7 @@ Market Size has a positive impact, but when considering the coefficient size, th
  Model:                            OLS   Adj. R-squared:                  0.004
  Method:                 Least Squares   F-statistic:                     10.55
  Date:                Tue, 02 Apr 2024   Prob (F-statistic):            0.00118
- Time:                        18:21:08   Log-Likelihood:                -27569.
+ Time:                        18:46:18   Log-Likelihood:                -27569.
  No. Observations:                2250   AIC:                         5.514e+04
  Df Residuals:                    2248   BIC:                         5.515e+04
  Df Model:                           1                                         
@@ -9013,7 +9035,7 @@ Market Size has a positive impact, but when considering the coefficient size, th
  Model:                            OLS   Adj. R-squared:                  0.508
  Method:                 Least Squares   F-statistic:                     2319.
  Date:                Tue, 02 Apr 2024   Prob (F-statistic):               0.00
- Time:                        18:21:08   Log-Likelihood:                -26777.
+ Time:                        18:46:18   Log-Likelihood:                -26777.
  No. Observations:                2250   AIC:                         5.356e+04
  Df Residuals:                    2248   BIC:                         5.357e+04
  Df Model:                           1                                         
@@ -9141,26 +9163,7 @@ did):</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">new_product</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">'satisfaction'</span><span class="p">:</span> <span class="mf">4.6</span><span class="p">,</span>
-    <span class="s1">'discount'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-    <span class="s1">'retail_price'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="s1">'perc_physical'</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
-    <span class="s1">'market_size'</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="s1">'quality_premium'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s1">'quality_nan'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s1">'product_category_health'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s1">'product_category_other'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s1">'product_category_toys'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s1">'product_category_nan'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s1">'satisfaction_squared'</span><span class="p">:</span> <span class="mf">4.6</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">'discount_squared'</span><span class="p">:</span> <span class="mi">20</span> <span class="o">**</span> <span class="mi">2</span>
-<span class="p">}</span>
-
-<span class="n">new_product_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">new_product</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="n">predicted_sales</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_product_df</span><span class="p">)</span>
-<span class="n">predicted_sales</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">new_product_df</span>
 </pre></div>
 </div>
 </div>
@@ -9172,8 +9175,58 @@ did):</p>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>149917.4734877814</pre>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>satisfaction</th>
+<th>discount</th>
+<th>retail_price</th>
+<th>perc_physical</th>
+<th>market_size</th>
+<th>quality_premium</th>
+<th>quality_nan</th>
+<th>product_category_health</th>
+<th>product_category_other</th>
+<th>product_category_toys</th>
+<th>product_category_nan</th>
+<th>satisfaction_squared</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>4.6</td>
+<td>20</td>
+<td>10</td>
+<td>55</td>
+<td>1000</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>21.16</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -9186,8 +9239,25 @@ did):</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">percentile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">predicted_sales</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'The predicted sales of the new product is in the </span><span class="si">{</span><span class="n">percentile</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">th percentile of all products sold.'</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">new_product</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'satisfaction'</span><span class="p">:</span> <span class="mf">4.6</span><span class="p">,</span>
+    <span class="s1">'discount'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s1">'retail_price'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">'perc_physical'</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span>
+    <span class="s1">'market_size'</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s1">'quality_premium'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'quality_nan'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">'product_category_health'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">'product_category_other'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">'product_category_toys'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'product_category_nan'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">'satisfaction_squared'</span><span class="p">:</span> <span class="mf">4.6</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">}</span>
+
+<span class="n">new_product_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">new_product</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">y_pred_new</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_product_df</span><span class="p">)</span>
+<span class="n">y_pred_new</span>
 </pre></div>
 </div>
 </div>
@@ -9197,11 +9267,37 @@ did):</p>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>The predicted sales of the new product is in the 52.98th percentile of all products sold.
-</pre>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>0    148779.583234
+dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>147318.75155555556</pre>
 </div>
 </div>
 </div>
@@ -9213,7 +9309,7 @@ did):</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The product is calculated to sell 149917 items, which is about average of all products in the dataset (53th percentile).</p>
+<p>The product is calculated to sell 148779 items, which is close to the average amount of products sold</p>
 <p>The prediction is about 84% accurate.</p>
 </div>
 </div>
