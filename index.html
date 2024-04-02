@@ -8236,7 +8236,7 @@ a.anchor-link {
 <li>Re-fit the regression model with the transformed variables.</li>
 <li>Compare model fit before and after the transformations to assess improvements.</li>
 </ol>
-<p><em>We will focus on 'satisfaction, discount, retail_price, and market_size' for this visualization.</em></p>
+<p><em>We will focus on 'satisfaction, discount, retail_price, perc_physical, and market_size' for this visualization.</em></p>
 </div>
 </div>
 </div>
@@ -8424,6 +8424,8 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="2.-Identify-non-linear-relationships-based-on-these-visualizations.">2. Identify non-linear relationships based on these visualizations.<a class="anchor-link" href="#2.-Identify-non-linear-relationships-based-on-these-visualizations.">¶</a></h3><ol>
 <li>Satisfaction seems like a non-linear relationship</li>
+<li>Discount seems like a non-linear relationship; but it is not very clear as the data points are very scattered on the right</li>
+<li>Retail price and perc physical seem like a random cloud, with no real influence on the products sold</li>
 </ol>
 </div>
 </div>
@@ -8861,55 +8863,55 @@ a.anchor-link {
 <td>Discount</td>
 <td>Yes</td>
 <td>High</td>
-<td>Increasing discount time significantly increases sales.</td>
+<td>Longer discount durations significantly decrease sales.</td>
 </tr>
 <tr>
 <td>Retail Price</td>
 <td>Yes</td>
 <td>High</td>
-<td>Higher retail prices significantly decrease sales.</td>
+<td>Higher retail prices significantly reduce sales.</td>
 </tr>
 <tr>
 <td>Perc_Physical</td>
 <td>No</td>
 <td>-</td>
-<td>The physical percentage of a product doesn't significantly affect sales.</td>
+<td>The physical percentage of a product does not significantly influence sales.</td>
 </tr>
 <tr>
 <td>Market Size</td>
 <td>Yes</td>
-<td>Very High</td>
-<td>Larger market sizes are crucial for higher sales.</td>
+<td>High</td>
+<td>Larger market sizes drive higher sales.</td>
 </tr>
 <tr>
 <td>Product Category Health</td>
 <td>Yes</td>
 <td>High</td>
-<td>Health category products significantly sell less compared to the baseline.</td>
+<td>Products in the health category sell significantly less.</td>
 </tr>
 <tr>
 <td>Product Category Other</td>
 <td>Yes</td>
 <td>High</td>
-<td>Products in "other" categories significantly sell less compared to the baseline.</td>
+<td>Products in "other" categories sell significantly less.</td>
 </tr>
 <tr>
 <td>Product Category Toys</td>
 <td>Yes</td>
 <td>High</td>
-<td>Toys category products significantly sell less compared to the baseline.</td>
+<td>Products in the toys category sell significantly less.</td>
 </tr>
 <tr>
 <td>Quality Premium</td>
 <td>Yes</td>
 <td>High</td>
-<td>Premium quality products sell less, possibly due to higher prices.</td>
+<td>Premium quality products sell less, likely due to higher prices.</td>
 </tr>
 <tr>
 <td>Satisfaction Squared</td>
 <td>Yes</td>
 <td>Very High</td>
-<td>Higher levels of satisfaction squared significantly increase sales, indicating a complex, non-linear relationship.</td>
+<td>Higher levels of satisfaction squared significantly boost sales, indicating a complex, non-linear relationship.</td>
 </tr>
 </tbody>
 </table>
@@ -8947,11 +8949,10 @@ a.anchor-link {
 </blockquote>
 <h4 id="The-P-Values">The P-Values<a class="anchor-link" href="#The-P-Values">¶</a></h4><ol>
 <li>Retail Price: The p-value is extremely low (1.02e-16), indicating that the relationship between retail price and products sold is statistically significant.</li>
-<li>Market Size: The p-value is 0 (rounded), also indicating a statistically significant relationship with the number of products sold.
-Impact Magnitude and Significance
-Retail Price has a high negative impact on sales, meaning as the price goes up, sales go down significantly.
-Market Size has a positive impact, but when considering the magnitude (coefficient size), the effect of a unit change in market size is smaller compared to the impact of a unit change in price on sales volume.</li>
+<li>Market Size: The p-value is 0.00, also indicating a statistically significant relationship with the number of products sold.</li>
 </ol>
+<h4 id="Coefficient-size-and-Significance">Coefficient size and Significance<a class="anchor-link" href="#Coefficient-size-and-Significance">¶</a></h4><p>Retail Price has a high negative impact on sales, meaning as the price goes up, sales go down significantly.
+Market Size has a positive impact, but when considering the coefficient size, the effect of a unit change in market size is smaller compared to the impact of a unit change in price on sales volume.</p>
 <blockquote>
 <p>Using the p values we may conclude that the results are statistically significant</p>
 </blockquote>
@@ -8965,7 +8966,7 @@ Market Size has a positive impact, but when considering the magnitude (coefficie
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Testing-using-only-market-size-or-retail-price">Testing using only market size or retail price<a class="anchor-link" href="#Testing-using-only-market-size-or-retail-price">¶</a></h4>
+<h4 id="Testing-using-only-market-size-or-retail-price-as-predictors">Testing using only market size or retail price as predictors<a class="anchor-link" href="#Testing-using-only-market-size-or-retail-price-as-predictors">¶</a></h4>
 </div>
 </div>
 </div>
@@ -9100,6 +9101,61 @@ Market Size has a positive impact, but when considering the magnitude (coefficie
 </table>
 <h4 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">¶</a></h4><p>The individual OLS regression models reveal that both retail price and market size significantly affect the number of products sold. However, the impact of market size is considerably more substantial than that of retail price, as shown by a much higher R-squared value in the market size model (50.9% vs. 0.5%). This means that while price does have a significant impact on sales, market size is far more predictive of the number of products sold.</p>
 <p>Thus, according to this analysis, the argument that market size matters most for how much a product sells is better supported by the data. Market size has a more substantial and statistically significant impact on sales volume compared to retail price, making it a crucial factor to consider in sales strategies.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Assignment-5:-(20%25)">Assignment 5: (20%)<a class="anchor-link" href="#Assignment-5:-(20%25)">¶</a></h1><p>Finally, the management is interested in stocking a new product and wants to know if you
+can use your regression model to predict how many items it would sell. Make your
+prediction using your regression model, keeping in mind the principle of parsimony, and
+report how accurate you think this prediction is.</p>
+<p>In the table below you can find the characteristics that the product has (or at least that it
+will likely have based on what they plan for the product and independent research they
+did):</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product Category</td>
+<td>Toy</td>
+</tr>
+<tr>
+<td>Quality</td>
+<td>Premium</td>
+</tr>
+<tr>
+<td>Satisfaction</td>
+<td>4.6 stars</td>
+</tr>
+<tr>
+<td>Discount</td>
+<td>20 weeks</td>
+</tr>
+<tr>
+<td>Retail price</td>
+<td>10 euros</td>
+</tr>
+<tr>
+<td>Percent physical</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>Market size</td>
+<td>1000</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
