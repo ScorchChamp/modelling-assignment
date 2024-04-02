@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Modelling Assignment</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>index</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7936,7 +7936,7 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">data_original_with_missing_outliers</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="c1"># replace the identified outliers with np.nan</span>
+
 <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">outliers_indices</span><span class="p">,</span> <span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 </pre></div>
 </div>
@@ -8918,14 +8918,12 @@ Market Size has a positive impact, but when considering the coefficient size, th
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">best_dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">])</span>
 <span class="n">X_with_const</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-<span class="c1"># Creating separate models for 'retail_price' and 'market_size' to evaluate their individual impacts</span>
 <span class="n">model_price</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_with_const</span><span class="p">[[</span><span class="s1">'const'</span><span class="p">,</span> <span class="s1">'retail_price'</span><span class="p">]])</span>
 <span class="n">results_price</span> <span class="o">=</span> <span class="n">model_price</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
 <span class="n">model_market_size</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_with_const</span><span class="p">[[</span><span class="s1">'const'</span><span class="p">,</span> <span class="s1">'market_size'</span><span class="p">]])</span>
 <span class="n">results_market_size</span> <span class="o">=</span> <span class="n">model_market_size</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
-<span class="c1"># Extracting the summary of results for each model</span>
 <span class="n">summary_price</span> <span class="o">=</span> <span class="n">results_price</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 <span class="n">summary_market_size</span> <span class="o">=</span> <span class="n">results_market_size</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 <span class="n">summary_price</span><span class="p">,</span> <span class="n">summary_market_size</span>
@@ -9150,8 +9148,7 @@ did):</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate in what percentile the predicted sales is</span>
-<span class="n">percentile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">predicted_sales</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">percentile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">predicted_sales</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'The predicted sales of the new product is in the </span><span class="si">{</span><span class="n">percentile</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">th percentile of all products sold.'</span><span class="p">)</span>
 </pre></div>
 </div>
